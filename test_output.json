@@ -1,0 +1,145 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    85    0     0  100    85      0     70  0:00:01  0:00:01 --:--:--    70100    85    0     0  100    85      0     38  0:00:02  0:00:02 --:--:--    38100    85    0     0  100    85      0     26  0:00:03  0:00:03 --:--:--    26100    85    0     0  100    85      0     20  0:00:04  0:00:04 --:--:--    20100    85    0     0  100    85      0     16  0:00:05  0:00:05 --:--:--    16100    85    0     0  100    85      0     13  0:00:06  0:00:06 --:--:--     0100    85    0     0  100    85      0     11  0:00:07  0:00:07 --:--:--     0100    85    0     0  100    85      0     10  0:00:08  0:00:08 --:--:--     0100    85    0     0  100    85      0      9  0:00:09  0:00:09 --:--:--     0100    85    0     0  100    85      0      8  0:00:10  0:00:10 --:--:--     0100    85    0     0  100    85      0      7  0:00:12  0:00:11  0:00:01     0100    85    0     0  100    85      0      6  0:00:14  0:00:12  0:00:02     0100    85    0     0  100    85      0      6  0:00:14  0:00:13  0:00:01     0100    85    0     0  100    85      0      5  0:00:17  0:00:14  0:00:03     0100    85    0     0  100    85      0      5  0:00:17  0:00:15  0:00:02     0100    85    0     0  100    85      0      5  0:00:17  0:00:16  0:00:01     0100    85    0     0  100    85      0      4  0:00:21  0:00:17  0:00:04     0100    85    0     0  100    85      0      4  0:00:21  0:00:18  0:00:03     0100    85    0     0  100    85      0      4  0:00:21  0:00:19  0:00:02     0100    85    0     0  100    85      0      4  0:00:21  0:00:20  0:00:01     0100    85    0     0  100    85      0      4  0:00:21  0:00:21 --:--:--     0100    85    0     0  100    85      0      3  0:00:28  0:00:22  0:00:06     0100    85    0     0  100    85      0      3  0:00:28  0:00:23  0:00:05     0100    85    0     0  100    85      0      3  0:00:28  0:00:24  0:00:04     0100    85    0     0  100    85      0      3  0:00:28  0:00:25  0:00:03     0100    85    0     0  100    85      0      3  0:00:28  0:00:26  0:00:02     0100    85    0     0  100    85      0      3  0:00:28  0:00:27  0:00:01     0100    85    0     0  100    85      0      3  0:00:28  0:00:28 --:--:--     0100    85    0     0  100    85      0      2  0:00:42  0:00:29  0:00:13     0100    85    0     0  100    85      0      2  0:00:42  0:00:30  0:00:12     0100    85    0     0  100    85      0      2  0:00:42  0:00:31  0:00:11     0100    85    0     0  100    85      0      2  0:00:42  0:00:32  0:00:10     0100    85    0     0  100    85      0      2  0:00:42  0:00:33  0:00:09     0100    85    0     0  100    85      0      2  0:00:42  0:00:34  0:00:08     0100    85    0     0  100    85      0      2  0:00:42  0:00:35  0:00:07     0100    85    0     0  100    85      0      2  0:00:42  0:00:36  0:00:06     0100    85    0     0  100    85      0      2  0:00:42  0:00:37  0:00:05     0100    85    0     0  100    85      0      2  0:00:42  0:00:38  0:00:04     0100  2633  100  2548  100    85     66      2  0:00:42  0:00:38  0:00:04   630
+{
+    "extracted_data": {
+        "transaction_type": "810",
+        "transaction_purpose": "00",
+        "transaction_type_code": "PP",
+        "po_number": null,
+        "po_date": null,
+        "invoice_number": "6GYNT 2",
+        "invoice_date": "20240827",
+        "buyer": null,
+        "seller": null,
+        "remit_to": null,
+        "issuer": {
+            "entity_code": "II",
+            "name": null,
+            "id_qualifier": "M4",
+            "identifier": "AJ2"
+        },
+        "bill_to": {
+            "entity_code": "BT",
+            "name": null,
+            "id_qualifier": "10",
+            "identifier": "WWWWWW"
+        },
+        "ship_to": null,
+        "ship_from": null,
+        "buyer_address": null,
+        "seller_address": null,
+        "remit_to_address": null,
+        "bill_to_address": null,
+        "ship_to_address": null,
+        "contacts": [],
+        "items": [
+            {
+                "line_number": 1,
+                "quantity": 5.0,
+                "unit_of_measure": "PK",
+                "unit_price": 362.34,
+                "item_id": "6515-01-561-6204",
+                "item_description": null,
+                "status": "ACTIVE",
+                "product_id_qualifier": "N4",
+                "nsn": "6515-01-561-6204",
+                "vendor_part_number": null,
+                "buyer_part_number": null,
+                "extended_amount": 1811.7
+            }
+        ],
+        "references": [
+            {
+                "qualifier": "TN",
+                "identifier": "WWWWWW42290001",
+                "description": null
+            }
+        ],
+        "dates": [
+            {
+                "qualifier": "011",
+                "date_value": "20240827",
+                "time_value": null
+            },
+            {
+                "qualifier": "168",
+                "date_value": "20240827",
+                "time_value": null
+            }
+        ],
+        "code_lists": [
+            {
+                "agency_code": "DF",
+                "source_subqualifier": null,
+                "codes": [
+                    {
+                        "qualifier": "0",
+                        "industry_code": "FS2"
+                    }
+                ]
+            }
+        ],
+        "financial_accounting": {
+            "agency_code": null,
+            "breakdown_codes": [
+                {
+                    "breakdown_code": "58",
+                    "financial_code": "97X12345678"
+                },
+                {
+                    "breakdown_code": "18",
+                    "financial_code": "2142020"
+                }
+            ]
+        },
+        "payment_terms": null,
+        "carrier_info": {
+            "routing_sequence": null,
+            "id_qualifier": null,
+            "id_code": null,
+            "transport_method": null,
+            "routing": "Z",
+            "shipment_method": null
+        },
+        "carrier_detail": null,
+        "service_charges": [
+            {
+                "indicator": "A",
+                "code": null,
+                "agency_qualifier": null,
+                "agency_code": null,
+                "amount": 1811.7
+            }
+        ],
+        "subtotal_amount": 1811.7,
+        "total_amount": 1811.7,
+        "number_of_line_items": 1,
+        "confidence_score": 0.95,
+        "notes": "Most required fields extracted. No explicit buyer, seller, ship_to, ship_from, remit_to, or contact information provided in text. No payment terms or detailed carrier info beyond routing 'Z'. Only one line item and one service charge (allowance) present. Code lists and financial accounting extracted from narrative. Some fields set to null due to lack of data."
+    },
+    "raw_edi_segments": [
+        "BIG*20240827*6GYNT 2*****PP*00~",
+        "REF*TN*WWWWWW42290001~",
+        "N1*BT**10*WWWWWW**TO~",
+        "N1*II**M4*AJ2**FR~",
+        "N1*II**10~",
+        "LM*DF~",
+        "LQ*0*FS2~",
+        "FA1*DZ~",
+        "FA2*58*97X12345678~",
+        "FA2*18*2142020~",
+        "IT1*1*5*PK*362.34*ST*FS*6515015616204~",
+        "DTM*011*20240827~",
+        "DTM*168*20240827~",
+        "TD5*O*2**M*Z~",
+        "TDS*181170~",
+        "SAC*A****181170~",
+        "TDS*181170~",
+        "CTT*1~"
+    ],
+    "validation_errors": [
+        "WARNING: No buyer or seller information found"
+    ],
+    "status": "success"
+}
