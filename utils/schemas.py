@@ -17,6 +17,7 @@ class LineItem(BaseModel):
     vendor_part_number: Optional[str] = Field(None, description="Vendor's part number")
     buyer_part_number: Optional[str] = Field(None, description="Buyer's part number")
     extended_amount: Optional[float] = Field(None, description="Line total (qty * price)")
+    pack_size: Optional[int] = Field(None, description="Pack size/inner pack quantity (PO4 segment)")
 
 
 # Party/entity information (N1 loops)
@@ -123,6 +124,21 @@ class CarrierInfo(BaseModel):
     shipment_method: Optional[str] = Field(None, description="Shipment method description")
 
 
+# FOB shipping terms (FOB segment)
+class FOBTerms(BaseModel):
+    shipment_method: Optional[str] = Field(None, description="CC=Collect, PP=Prepaid, etc.")
+    location_qualifier: Optional[str] = Field(None, description="OR=Origin, DE=Destination, etc.")
+    description: Optional[str] = Field(None, description="FOB description")
+    transportation_terms: Optional[str] = Field(None, description="Transportation terms code")
+
+
+# Special instructions/notes (N9/MTX segments)
+class SpecialInstruction(BaseModel):
+    reference_qualifier: Optional[str] = Field(None, description="L1=Letters or Notes, etc.")
+    reference_id: Optional[str] = Field(None, description="Reference identifier")
+    messages: List[str] = Field(default_factory=list, description="List of message text lines (MTX segments)")
+
+
 # Main extracted transaction structure
 class ExtractedTransaction(BaseModel):
     # Transaction header
@@ -133,6 +149,7 @@ class ExtractedTransaction(BaseModel):
     po_date: Optional[str] = Field(None, description="Purchase order date YYYYMMDD")
     invoice_number: Optional[str] = Field(None, description="Invoice number")
     invoice_date: Optional[str] = Field(None, description="Invoice date YYYYMMDD")
+    currency: Optional[str] = Field(None, description="Currency code (USD, EUR, etc.)")
     # Parties
     buyer: Optional[Party] = Field(None, description="Buying party (BY)")
     seller: Optional[Party] = Field(None, description="Seller/remit-to party (SE)")
@@ -174,7 +191,13 @@ class ExtractedTransaction(BaseModel):
     # Carrier/transportation (TD5 and CAD)
     carrier_info: Optional[CarrierInfo] = Field(None, description="Carrier identification and routing")
     carrier_detail: Optional[CarrierDetail] = Field(None, description="Carrier and routing information")
-    
+
+    # FOB shipping terms
+    fob_terms: Optional[FOBTerms] = Field(None, description="FOB shipping terms and payment")
+
+    # Special instructions/notes
+    special_instructions: List[SpecialInstruction] = Field(default_factory=list, description="Special instructions and notes (N9/MTX)")
+
     # Service charges (SAC)
     service_charges: List[ServiceCharge] = Field(default_factory=list, description="Allowances and charges")
     

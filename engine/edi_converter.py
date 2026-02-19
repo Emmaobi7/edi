@@ -246,14 +246,27 @@ class EDIConverter:
         
         # Step 4: Extract structured JSON using LLM
         print(f"Extracting structured data from text (transaction type: {transaction_type})...")
-        extracted_data: ExtractedTransaction = chain_structured_extraction.invoke({
-            'text': raw_text,
-            'transaction_type': transaction_type,
-            'metadata_summary': metadata_summary
-        })
-        
+        print(f"Text length: {len(raw_text)} characters")
+        print(f"Calling LLM with metadata: {metadata_summary}")
+
+        try:
+            import time
+            start_time = time.time()
+            extracted_data: ExtractedTransaction = chain_structured_extraction.invoke({
+                'text': raw_text,
+                'transaction_type': transaction_type,
+                'metadata_summary': metadata_summary
+            })
+            elapsed = time.time() - start_time
+            print(f"✓ LLM extraction completed in {elapsed:.2f} seconds")
+        except Exception as e:
+            print(f"❌ LLM extraction failed: {str(e)}")
+            raise
+
         # Step 5: Validate extracted data
+        print(f"Validating extracted data...")
         validation_errors = self._validate_extraction(extracted_data, transaction_type)
+        print(f"Validation complete. Errors: {len(validation_errors)}")
         
         # Step 6: Build EDI segments deterministically (only if build_edi=True and validation passes)
         edi_segments_output = []

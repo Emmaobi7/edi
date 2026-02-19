@@ -283,33 +283,72 @@ class DBDrivenEDIBuilder:
                                      agency: str, version: str) -> List[str]:
         """Build 850 Purchase Order transaction."""
         segments = []
-        
+
         # BEG - Beginning segment for PO
         beg_seg = await self._build_BEG(data, agency, version)
         if beg_seg:
             segments.append(beg_seg)
-        
+
+        # CUR - Currency (always include, defaults to USD)
+        cur_seg = await self._build_CUR(data, agency, version)
+        if cur_seg:
+            segments.append(cur_seg)
+
         # REF - Reference identification
         ref_segs = await self._build_REF_loops(data, agency, version)
         segments.extend(ref_segs)
-        
+
+        # FOB - Shipping terms (if present)
+        if data.fob_terms:
+            fob_seg = await self._build_FOB(data, agency, version)
+            if fob_seg:
+                segments.append(fob_seg)
+
+        # SAC - Service charges/allowances (if present)
+        if data.service_charges:
+            sac_segs = await self._build_SAC_loops(data, agency, version)
+            segments.extend(sac_segs)
+
+        # ITD - Payment terms (if present)
+        if data.payment_terms:
+            itd_seg = await self._build_ITD(data, agency, version)
+            if itd_seg:
+                segments.append(itd_seg)
+
         # DTM - Date/time reference
         dtm_segs = await self._build_DTM_loops(data, agency, version)
         segments.extend(dtm_segs)
-        
+
+        # TD5 - Carrier details (if present)
+        if data.carrier_info:
+            td5_seg = await self._build_TD5(data, agency, version)
+            if td5_seg:
+                segments.append(td5_seg)
+
+        # N9/MTX - Special instructions and notes (if present)
+        if data.special_instructions:
+            n9_mtx_segs = await self._build_N9_MTX_loops(data, agency, version)
+            segments.extend(n9_mtx_segs)
+
         # N1 loops - parties in specific order for 850: BY, SE, BT, ST, SF
         n1_segs = await self._build_N1_loops_850(data, agency, version)
         segments.extend(n1_segs)
-        
-        # PO1 - Line items
+
+        # PO1 - Line items (includes PO4 and AMT for each item)
         po1_segs = await self._build_PO1_loops(data, agency, version)
         segments.extend(po1_segs)
-        
+
         # CTT - Transaction totals
         ctt_seg = await self._build_CTT(data, agency, version)
         if ctt_seg:
             segments.append(ctt_seg)
-        
+
+        # AMT - Total amount (if present)
+        if data.total_amount:
+            amt_seg = await self._build_AMT_total(data, agency, version)
+            if amt_seg:
+                segments.append(amt_seg)
+
         return segments
     
     async def _build_BIG(self, data: ExtractedTransaction, agency: str, version: str) -> str:
@@ -623,15 +662,15 @@ class DBDrivenEDIBuilder:
     async def _build_PO1_loops(self, data: ExtractedTransaction, agency: str, version: str) -> List[str]:
         """Build PO1 line item segments for purchase orders."""
         segments = []
-        
+
         for item in data.items:
             # For CANCELLED items, set quantity to 0
             quantity = 0 if item.status == 'CANCELLED' else item.quantity
-            
+
             # Use product_id_qualifier if provided, otherwise default to appropriate type
             id_qualifier = item.product_id_qualifier or 'BP'  # BP = Buyer's Part Number
             product_id = item.nsn or item.item_id
-            
+
             po1_data = {
                 1: item.line_number,
                 2: quantity,
@@ -642,7 +681,7 @@ class DBDrivenEDIBuilder:
                 7: product_id,  # Product ID
             }
             segments.append(await self.build_segment('PO1', po1_data, agency, version))
-            
+
             # Add PID segment for description if present
             if item.item_description:
                 pid_data = {
@@ -653,7 +692,22 @@ class DBDrivenEDIBuilder:
                     5: item.item_description,  # Description
                 }
                 segments.append(await self.build_segment('PID', pid_data, agency, version))
-        
+
+            # Add PO4 segment for pack size if present
+            if item.pack_size:
+                po4_data = {
+                    1: item.pack_size,  # Pack size
+                }
+                segments.append(await self.build_segment('PO4', po4_data, agency, version))
+
+            # Add AMT segment for line amount if present
+            if item.extended_amount:
+                amt_data = {
+                    1: '1',  # 1 = Line Item Total
+                    2: item.extended_amount,
+                }
+                segments.append(await self.build_segment('AMT', amt_data, agency, version))
+
         return segments
     
     async def _build_REF_loops(self, data: ExtractedTransaction, agency: str, version: str) -> List[str]:
@@ -817,8 +871,66 @@ class DBDrivenEDIBuilder:
         """Build CTT (Transaction Totals) segment."""
         if not data.number_of_line_items:
             return None
-        
+
         data_map = {
             1: data.number_of_line_items,
         }
         return await self.build_segment('CTT', data_map, agency, version)
+
+    async def _build_AMT_total(self, data: ExtractedTransaction, agency: str, version: str) -> Optional[str]:
+        """Build AMT (Monetary Amount) segment for total order value."""
+        if not data.total_amount:
+            return None
+
+        data_map = {
+            1: 'GV',  # GV = Gross Invoice Amount
+            2: data.total_amount,
+        }
+        return await self.build_segment('AMT', data_map, agency, version)
+
+    async def _build_CUR(self, data: ExtractedTransaction, agency: str, version: str) -> Optional[str]:
+        """Build CUR (Currency) segment."""
+        # Default to USD if not specified
+        currency = data.currency or 'USD'
+
+        data_map = {
+            1: 'BY',  # BY = Buying Party (Buyer's Currency)
+            2: currency,
+        }
+        return await self.build_segment('CUR', data_map, agency, version)
+
+    async def _build_FOB(self, data: ExtractedTransaction, agency: str, version: str) -> Optional[str]:
+        """Build FOB (Free on Board) shipping terms segment."""
+        if not data.fob_terms:
+            return None
+
+        fob = data.fob_terms
+        data_map = {
+            1: fob.shipment_method,  # CC=Collect, PP=Prepaid
+            2: fob.location_qualifier,  # OR=Origin, DE=Destination
+            3: fob.description,  # Description
+            4: fob.transportation_terms,  # Transportation terms code
+        }
+        return await self.build_segment('FOB', data_map, agency, version)
+
+    async def _build_N9_MTX_loops(self, data: ExtractedTransaction, agency: str, version: str) -> List[str]:
+        """Build N9/MTX loops for special instructions and notes."""
+        segments = []
+
+        for instruction in data.special_instructions:
+            # N9 segment
+            n9_data = {
+                1: instruction.reference_qualifier or 'L1',  # L1=Letters or Notes
+                2: instruction.reference_id,
+            }
+            segments.append(await self.build_segment('N9', n9_data, agency, version))
+
+            # MTX segments for each message line
+            for message in instruction.messages:
+                mtx_data = {
+                    1: None,  # Message text type (optional)
+                    2: message,  # Message text
+                }
+                segments.append(await self.build_segment('MTX', mtx_data, agency, version))
+
+        return segments
